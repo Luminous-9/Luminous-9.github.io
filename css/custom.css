@@ -14,8 +14,8 @@
 .custom-github::before {
   content: "";
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   background: url(/images/github.svg) no-repeat;
   background-size: contain;
   vertical-align: middle;
