@@ -1,16 +1,11 @@
-/* 调整 B站图标（圆形需稍大） */
+/* B站图标自定义 */
 .custom-bilibili::before {
   content: "";
   display: inline-block;
-  width: 18px !important;  /* 比 GitHub 大 2px */
-  height: 18px !important;
-  background: url(/images/bilibili.svg) no-repeat center;
+  width: 18px;
+  height: 18px;
+  background: url(/images/bilibili.svg) no-repeat;
   background-size: contain;
   vertical-align: middle;
-}
-
-/* 统一 GitHub 图标容器 */
-.fa-github {
-  font-size: 16px !important;
-  vertical-align: middle;
+  margin-right: 5px;
 }
