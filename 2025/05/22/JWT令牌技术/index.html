@@ -1,0 +1,327 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>JWT令牌技术 | Luminous の Space</title><meta name="author" content="Luminous"><meta name="copyright" content="Luminous"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一、JWT令牌的定义JWT（JSON Web Token）是一种基于JSON的开放标准（RFC 7519），用于在网络应用间安全传递声明信息。其核心特点是通过数字签名或加密实现数据的自包含性和防篡改，无需依赖中心化存储即可完成身份验证。 核心特性 自包含性：令牌内直接携带用户身份、权限等关键信息，服务端无需查询数据库即可完成验证。  无状态性：适用于分布式系统，避免传统Session机制中的会话同">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JWT令牌技术">
+<meta property="og:url" content="https://code.luminous-9.xyz/2025/05/22/JWT%E4%BB%A4%E7%89%8C%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="Luminous の Space">
+<meta property="og:description" content="一、JWT令牌的定义JWT（JSON Web Token）是一种基于JSON的开放标准（RFC 7519），用于在网络应用间安全传递声明信息。其核心特点是通过数字签名或加密实现数据的自包含性和防篡改，无需依赖中心化存储即可完成身份验证。 核心特性 自包含性：令牌内直接携带用户身份、权限等关键信息，服务端无需查询数据库即可完成验证。  无状态性：适用于分布式系统，避免传统Session机制中的会话同">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://code.luminous-9.xyz/img/%E5%A4%B4%E5%83%8F.jpg">
+<meta property="article:published_time" content="2025-05-22T05:03:32.000Z">
+<meta property="article:modified_time" content="2025-05-23T02:49:12.975Z">
+<meta property="article:author" content="Luminous">
+<meta property="article:tag" content="JWT">
+<meta property="article:tag" content="JAVA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://code.luminous-9.xyz/img/%E5%A4%B4%E5%83%8F.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "JWT令牌技术",
+  "url": "https://code.luminous-9.xyz/2025/05/22/JWT%E4%BB%A4%E7%89%8C%E6%8A%80%E6%9C%AF/",
+  "image": "https://code.luminous-9.xyz/img/%E5%A4%B4%E5%83%8F.jpg",
+  "datePublished": "2025-05-22T05:03:32.000Z",
+  "dateModified": "2025-05-23T02:49:12.975Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Luminous",
+      "url": "https://code.luminous-9.xyz/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://code.luminous-9.xyz/2025/05/22/JWT%E4%BB%A4%E7%89%8C%E6%8A%80%E6%9C%AF/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          const mediaQueryDark = window.matchMedia('(prefers-color-scheme: dark)')
+          const mediaQueryLight = window.matchMedia('(prefers-color-scheme: light)')
+
+          if (theme === undefined) {
+            if (mediaQueryLight.matches) activateLightMode()
+            else if (mediaQueryDark.matches) activateDarkMode()
+            else {
+              const hour = new Date().getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            mediaQueryDark.addEventListener('change', () => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else {
+            theme === 'light' ? activateLightMode() : activateDarkMode()
+          }
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'JWT令牌技术',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/loading.gif" data-original="/img/%E5%A4%B4%E5%83%8F.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/枫树.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Luminous の Space</span></a><a class="nav-page-title" href="/"><span class="site-name">JWT令牌技术</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">JWT令牌技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-05-22T05:03:32.000Z" title="发表于 2025-05-22 13:03:32">2025-05-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-05-23T02:49:12.975Z" title="更新于 2025-05-23 10:49:12">2025-05-23</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h3 id="一、JWT令牌的定义"><a href="#一、JWT令牌的定义" class="headerlink" title="一、JWT令牌的定义"></a><strong>一、JWT令牌的定义</strong></h3><p>JWT（JSON Web Token）是一种基于JSON的开放标准（RFC 7519），用于在网络应用间安全传递声明信息。其核心特点是通过数字签名或加密实现数据的<strong>自包含性</strong>和<strong>防篡改</strong>，无需依赖中心化存储即可完成身份验证。</p>
+<h4 id="核心特性"><a href="#核心特性" class="headerlink" title="核心特性"></a><strong>核心特性</strong></h4><ol>
+<li><p>自包含性：令牌内直接携带用户身份、权限等关键信息，服务端无需查询数据库即可完成验证。</p>
+</li>
+<li><p>无状态性：适用于分布式系统，避免传统Session机制中的会话同步问题</p>
+</li>
+<li><p>跨域支持：通过HTTP头部传递，天然适配微服务架构和跨域资源共享（CORS）</p>
+</li>
+</ol>
+<hr>
+<h3 id="二、JWT令牌的组成结构"><a href="#二、JWT令牌的组成结构" class="headerlink" title="二、JWT令牌的组成结构"></a><strong>二、JWT令牌的组成结构</strong></h3><p>JWT由三部分通过点（<code>.</code>）连接组成，格式为：<code>Header.Payload.Signature</code></p>
+<h4 id="1-头部（Header）"><a href="#1-头部（Header）" class="headerlink" title="1. 头部（Header）"></a>1. <strong>头部（Header）</strong></h4><ul>
+<li><strong>作用</strong>：声明令牌类型与签名算法。</li>
+<li>编码方式：Base64URL编码</li>
+</ul>
+<h4 id="2-载荷（Payload）"><a href="#2-载荷（Payload）" class="headerlink" title="2. 载荷（Payload）"></a>2. <strong>载荷（Payload）</strong></h4><ul>
+<li><p><strong>作用</strong>：存储用户身份、权限及其他自定义数据。</p>
+</li>
+<li><p>标准字段</p>
+<p>（RFC定义）：iss（签发者）、sub主题）、exp（过期时间）、iat（签发时间）</p>
+</li>
+<li><p>自定义字段：可添加业务相关数据（如userId、role），但需避免存储敏感信息（因Base64可逆解码）</p>
+</li>
+</ul>
+<h4 id="3-签名（Signature）"><a href="#3-签名（Signature）" class="headerlink" title="3. 签名（Signature）"></a>3. <strong>签名（Signature）</strong></h4><ul>
+<li><strong>作用</strong>：验证令牌完整性，防止篡改。</li>
+<li>生成方式：将Header和Payload的Base64编码字符串拼接，使用Header中指定的算法（如HS256）与密钥加密</li>
+<li><strong>验证流程</strong>：服务端通过相同算法和密钥重新计算签名，与令牌中的签名比对</li>
+</ul>
+<h3 id="三、JWT令牌的适用场景"><a href="#三、JWT令牌的适用场景" class="headerlink" title="三、JWT令牌的适用场景"></a><strong>三、JWT令牌的适用场景</strong></h3><h4 id="1-单点登录（SSO）与跨域认证"><a href="#1-单点登录（SSO）与跨域认证" class="headerlink" title="1. 单点登录（SSO）与跨域认证"></a>1. <strong>单点登录（SSO）与跨域认证</strong></h4><ul>
+<li>场景描述：用户在一个系统登录后，JWT可作为凭证在多个关联系统中复用，无需重复认证。例如，认证中心颁发JWT后，用户携带该令牌访问其他业务系统时可直接通过签名验证身份。</li>
+<li>优势：避免维护复杂的Session同步机制，减少服务器存储压力，尤其适合多域名、多子系统的分布式架构。</li>
+</ul>
+<h4 id="2-分布式系统与微服务架构"><a href="#2-分布式系统与微服务架构" class="headerlink" title="2. 分布式系统与微服务架构"></a>2. <strong>分布式系统与微服务架构</strong></h4><ul>
+<li>场景描述：在微服务间传递身份信息时，JWT无需依赖中心化Session存储，各服务可独立验证令牌有效性。例如，Kubernetes服务网格通过JWT实现服务间认证。</li>
+<li>优势：无状态特性简化服务扩展，降低系统耦合度，符合云原生设计原则。</li>
+</ul>
+<h4 id="3-移动端与API认证"><a href="#3-移动端与API认证" class="headerlink" title="3. 移动端与API认证"></a>3. <strong>移动端与API认证</strong></h4><ul>
+<li>场景描述：移动应用通过JWT实现API访问授权。客户端将令牌存储在本地（如iOS的UserDefaults或Android的SharedPreferences），每次请求携带令牌头。</li>
+<li>优势：避免依赖Cookie，适配移动端网络环境，且支持跨平台（如React Native、Flutter）。</li>
+</ul>
+<h4 id="4-无密码认证与临时授权"><a href="#4-无密码认证与临时授权" class="headerlink" title="4. 无密码认证与临时授权"></a>4. <strong>无密码认证与临时授权</strong></h4><ul>
+<li>场景描述：用户通过“魔法链接”登录时，系统发送含JWT的链接至用户邮箱，点击后直接完成认证。</li>
+<li>优势：提升用户体验，减少密码管理风险，适用于短期操作（如密码重置）。</li>
+</ul>
+<h4 id="5-第三方授权（OAuth-2-0）"><a href="#5-第三方授权（OAuth-2-0）" class="headerlink" title="5. 第三方授权（OAuth 2.0）"></a>5. <strong>第三方授权（OAuth 2.0）</strong></h4><ul>
+<li>场景描述：在OAuth 2.0流程中，JWT作为访问令牌（Access Token）传递，资源服务可直接解析令牌中的权限声明，无需频繁查询授权服务器。</li>
+<li>优势：降低授权服务器负载，支持细粒度权限控制（如角色、作用域）。</li>
+</ul>
+<hr>
+<h3 id="四、JWT令牌的不适用场景"><a href="#四、JWT令牌的不适用场景" class="headerlink" title="四、JWT令牌的不适用场景"></a><strong>四、JWT令牌的不适用场景</strong></h3><h4 id="1-需要频繁撤销权限或令牌的场景"><a href="#1-需要频繁撤销权限或令牌的场景" class="headerlink" title="1. 需要频繁撤销权限或令牌的场景"></a>1. <strong>需要频繁撤销权限或令牌的场景</strong></h4><ul>
+<li>问题核心：JWT一旦签发即不可修改，若需立即撤销用户权限（如用户被封禁），只能等待令牌过期或强制刷新密钥，存在安全滞后性。</li>
+<li>替代方案：使用黑名单机制（将失效令牌存入Redis）或改用Session机制实时控制权限。</li>
+</ul>
+<h4 id="2-长时间有效的令牌需求"><a href="#2-长时间有效的令牌需求" class="headerlink" title="2. 长时间有效的令牌需求"></a>2. <strong>长时间有效的令牌需求</strong></h4><ul>
+<li>风险点：长期有效的JWT一旦泄露，攻击者可在过期前持续滥用。例如，用户离职后其令牌仍可访问敏感资源。</li>
+<li>解决方案：缩短令牌有效期（如1小时），配合刷新令牌（Refresh Token）延长会话。</li>
+</ul>
+<h4 id="3-高并发与带宽敏感场景"><a href="#3-高并发与带宽敏感场景" class="headerlink" title="3. 高并发与带宽敏感场景"></a>3. <strong>高并发与带宽敏感场景</strong></h4><ul>
+<li>性能瓶颈：JWT体积较大（通常500B-2KB），在大量并发请求中会增加网络传输开销，影响响应速度。</li>
+<li>替代方案：对带宽敏感场景（如物联网设备）改用轻量级Token（如随机UUID）。</li>
+</ul>
+<h4 id="4-需要存储复杂用户状态的场景"><a href="#4-需要存储复杂用户状态的场景" class="headerlink" title="4. 需要存储复杂用户状态的场景"></a>4. <strong>需要存储复杂用户状态的场景</strong></h4><ul>
+<li>局限性：JWT的无状态特性难以支持动态会话管理，例如需要跟踪用户在线状态、实时操作日志等。</li>
+<li>适用技术：传统Session机制或数据库存储会话详情。</li>
+</ul>
+<h4 id="5-对安全性要求极高的敏感场景"><a href="#5-对安全性要求极高的敏感场景" class="headerlink" title="5. 对安全性要求极高的敏感场景"></a>5. <strong>对安全性要求极高的敏感场景</strong></h4><ul>
+<li>风险暴露：JWT默认仅签名不加密，载荷（Payload）可被Base64解码，若包含敏感信息（如用户ID、角色）易遭中间人窃取。</li>
+<li>改进措施：结合JWE（JSON Web Encryption）加密载荷，或仅存储非敏感标识符。</li>
+</ul>
+<h3 id="五、JWT令牌的快速入门使用"><a href="#五、JWT令牌的快速入门使用" class="headerlink" title="五、JWT令牌的快速入门使用"></a><strong>五、JWT令牌的快速入门使用</strong></h3><h4 id="1-maven引入jwt"><a href="#1-maven引入jwt" class="headerlink" title="1.maven引入jwt"></a>1.maven引入jwt</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--  jwt--&gt;</span><br><span class="line">     &lt;dependency&gt;</span><br><span class="line">       &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;</span><br><span class="line">       &lt;artifactId&gt;jjwt&lt;/artifactId&gt;</span><br><span class="line">       &lt;version&gt;0.9.1&lt;/version&gt;</span><br><span class="line">     &lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-创建jwt工具类，在里面创建两个方法"><a href="#2-创建jwt工具类，在里面创建两个方法" class="headerlink" title="2.创建jwt工具类，在里面创建两个方法"></a>2.创建jwt工具类，在里面创建两个方法</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//创建jwt令牌</span><br><span class="line">public static String generateJwt(Map&lt;String, Object&gt; claims)&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//解析jwt令牌</span><br><span class="line">public static Claims parseJWT(String jwt)&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-创建jwt令牌"><a href="#3-创建jwt令牌" class="headerlink" title="3.创建jwt令牌"></a>3.创建jwt令牌</h4><ol>
+<li>addClaims()添加自定义内容到有效荷载（payload）中。</li>
+<li>signWith()：指定算法和密钥生成签名。</li>
+<li>setExpiration()：设置过期时间（System.currentTimeMillis()是返回当前的时间）</li>
+<li>compact()：生成最终的JWT字符串</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private static String signKey = &quot;luminous&quot;;//秘钥</span><br><span class="line">private static Long expire = 43200000L;</span><br><span class="line">public static String generateJwt(Map&lt;String, Object&gt; claims)&#123;</span><br><span class="line">    String jwt = Jwts.builder()</span><br><span class="line">            .addClaims(claims)</span><br><span class="line">            .signWith(SignatureAlgorithm.HS256, signKey)</span><br><span class="line">            .setExpiration(new Date(System.currentTimeMillis() + expire))</span><br><span class="line">            .compact();</span><br><span class="line">    return jwt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-创建jwt解析"><a href="#4-创建jwt解析" class="headerlink" title="4.创建jwt解析"></a>4.创建jwt解析</h4><h5 id="4-1-创建解析器实例-Jwts-parser"><a href="#4-1-创建解析器实例-Jwts-parser" class="headerlink" title="4.1. 创建解析器实例 (Jwts.parser())"></a>4.1. <strong>创建解析器实例 (<code>Jwts.parser()</code>)</strong></h5><ul>
+<li>作用：初始化JWT解析器对象，准备进行令牌解析。</li>
+<li>底层实现：返回DefaultJwtParser对象，该对象包含解码、验签等核心逻辑。内部初始化压缩解码器（如DefaultCompressionCodecResolver）和时钟校验工具（DefaultClock）。</li>
+</ul>
+<h5 id="4-2-设置签名密钥-setSigningKey-signKey"><a href="#4-2-设置签名密钥-setSigningKey-signKey" class="headerlink" title="4.2. 设置签名密钥 (setSigningKey(signKey))"></a>4.2. <strong>设置签名密钥 (<code>setSigningKey(signKey)</code>)</strong></h5><ul>
+<li>关键作用：提供验证签名所需的密钥，确保令牌未被篡改。</li>
+<li>技术要点：密钥必须与生成JWT时使用的密钥完全一致，否则验签失败。。</li>
+</ul>
+<h5 id="4-3-解析并验证令牌-parseClaimsJws-jwt"><a href="#4-3-解析并验证令牌-parseClaimsJws-jwt" class="headerlink" title="4.3. 解析并验证令牌 (parseClaimsJws(jwt))"></a>4.3. <strong>解析并验证令牌 (<code>parseClaimsJws(jwt)</code>)</strong></h5><ul>
+<li><p>执行流程：</p>
+<ol>
+<li>拆分JWT：以.分隔符切分Header、Payload、Signature三部分，校验格式有效性。</li>
+<li>解码头部：Base64URL解码Header，获取签名算法（HS256）。</li>
+<li>验证签名：使用密钥重新计算签名，与JWT中的Signature比对，防止数据篡改。</li>
+</ol>
+</li>
+<li><p>异常类型：</p>
+<ul>
+<li><pre><code>SignatureException：签名不匹配或密钥错误。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- ```</span><br><span class="line">  ExpiredJwtException：令牌已过期。</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+<li><pre><code>MalformedJwtException：JWT格式错误（如缺少部分）。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 4.4. **提取声明数据 (`getBody()`)**</span><br><span class="line"></span><br><span class="line">- 返回值：Claims对象，本质是包含Payload数据的Map结构。</span><br><span class="line">- 数据访问：</span><br><span class="line">  - 通过claims.get(&quot;key&quot;)获取自定义声明（如用户ID、角色）。</span><br><span class="line">  - 支持标准声明快捷方法（如getSubject()获取用户标识）。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>&#x2F;&#x2F;解析jwt令牌<br>public static Claims parseJWT(String jwt){<br>    Claims claims &#x3D; Jwts.parser()<br>            .setSigningKey(signKey)<br>            .parseClaimsJws(jwt)<br>            .getBody();<br>    return claims;<br>}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 5.使用jwt</span><br><span class="line"></span><br><span class="line">只需调用对应的这两个方法就可以，创建一个测试类，先生成jwt令牌</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>@Test
+public void test01() &#123;
+</code></pre>
+<p>&#x2F;&#x2F;        添加测试数据<br>        Map&lt;String, Object&gt; m1 &#x3D; new HashMap&lt;&gt;();<br>        m1.put(“id”, 1);<br>        m1.put(“username”, “admin”);<br>        m1.put(“password”, “admin”);<br>&#x2F;&#x2F;        生成JWT令牌<br>        String jwt &#x3D; JwtUtils.generateJwt(m1);<br>&#x2F;&#x2F;        打印jwt令牌<br>        System.out.println(“生成的jwt令牌：”+jwt);<br>    }</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"></span><br><span class="line">![](../images/JWT令牌技术/image-20250523104413900.png)</span><br><span class="line"></span><br><span class="line">由于jwt令牌太长，图片无法完全展示，我将他复制下来</span><br><span class="line">eyJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6ImFkbWluIiwiaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE3NDgwMTE0NDF9.znQ42CQWrd_lYoSmrNF2d1x20k8RH0tMdA-Di3kmQKU</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">接下来我们将生成jwt的方法注释掉，运行解析jwt方法</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre><code>@Test
+// 解析JWT令牌
+public void test02() &#123;
+    String jwt = &quot;eyJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6ImFkbWluIiwiaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE3NDgwMTE0NDF9.znQ42CQWrd_lYoSmrNF2d1x20k8RH0tMdA-Di3kmQKU&quot;;
+    Claims claims = JwtUtils.parseJWT(jwt);
+    System.out.println(&quot;解析后的jwt令牌：&quot;+claims);
+&#125;
+</code></pre>
+<pre><code>
+![image-20250523104753895](../images/JWT令牌技术/image-20250523104753895.png)
+
+可以看到解析出来的内容跟我们之前设置的内容是一样的。
+</code></pre>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://code.luminous-9.xyz">Luminous</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://code.luminous-9.xyz/2025/05/22/JWT%E4%BB%A4%E7%89%8C%E6%8A%80%E6%9C%AF/">https://code.luminous-9.xyz/2025/05/22/JWT%E4%BB%A4%E7%89%8C%E6%8A%80%E6%9C%AF/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://code.luminous-9.xyz" target="_blank">Luminous の Space</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JWT/">JWT</a><a class="post-meta__tags" href="/tags/JAVA/">JAVA</a></div><div class="post-share"><div class="social-share" data-image="/img/%E5%A4%B4%E5%83%8F.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/05/20/%E5%85%B3%E4%BA%8E%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E9%A1%B9%E7%9B%AELua%E8%84%9A%E6%9C%AC%E7%9A%84%E4%BD%BF%E7%94%A8/" title="关于黑马点评项目Lua脚本的使用"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">关于黑马点评项目Lua脚本的使用</div></div><div class="info-2"><div class="info-item-1">最近在学习黑马程序员的黑马点评项目中，使用到Lua脚本来确保程序的原子性。下面是对该Lua脚本使用的总结 Lua脚本内容：以下是输出锁的脚本内容 12345678--锁的线程标识KEY[1],线程标识ARGV[1]-- 判断线程标识是否与锁中的线程标识一致if(redis.call(&#x27;get&#x27;,KEY[1])==ARGV[1]) then-- 一致，删除锁return redis.call(&#x27;del&#x27;,KEY[1])end--不一致，直接返回return 0  Lua脚本的加载：123456private static final DefaultRedisScript&lt;Long&gt; UNLOCK_SCRIPT;static &#123;    UNLOCK_SCRIPT = new DefaultRedisScript&lt;&gt;();    UNLOCK_SCRIPT.setLocation(new ClassPathResource(&quot;unlock.lua&quot;));   ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/loading.gif" data-original="/img/%E5%A4%B4%E5%83%8F.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Luminous</div><div class="author-info-description">Ciallo～(∠・ω< )⌒★</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Luminous-9"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Luminous-9" target="_blank" title="GitHub"><i class="fab fa-github" style="color: #181717;"></i></a><a class="social-icon" href="https://space.bilibili.com/439268700" target="_blank" title="B站"><i class="custom-bilibili" style="color: #FB7299;"></i></a><a class="social-icon" href="https://space.bilibili.com/439268700" target="_blank" title="B站"><i class="fab fa-bilibili" style="color: #FB7299;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">邮箱：16677213863@163.com  
+QQ：2307862589
+</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81JWT%E4%BB%A4%E7%89%8C%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">一、JWT令牌的定义</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7"><span class="toc-number">1.1.</span> <span class="toc-text">核心特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81JWT%E4%BB%A4%E7%89%8C%E7%9A%84%E7%BB%84%E6%88%90%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">二、JWT令牌的组成结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%A4%B4%E9%83%A8%EF%BC%88Header%EF%BC%89"><span class="toc-number">2.1.</span> <span class="toc-text">1. 头部（Header）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%BD%BD%E8%8D%B7%EF%BC%88Payload%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">2. 载荷（Payload）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%AD%BE%E5%90%8D%EF%BC%88Signature%EF%BC%89"><span class="toc-number">2.3.</span> <span class="toc-text">3. 签名（Signature）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81JWT%E4%BB%A4%E7%89%8C%E7%9A%84%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">3.</span> <span class="toc-text">三、JWT令牌的适用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%8D%95%E7%82%B9%E7%99%BB%E5%BD%95%EF%BC%88SSO%EF%BC%89%E4%B8%8E%E8%B7%A8%E5%9F%9F%E8%AE%A4%E8%AF%81"><span class="toc-number">3.1.</span> <span class="toc-text">1. 单点登录（SSO）与跨域认证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84"><span class="toc-number">3.2.</span> <span class="toc-text">2. 分布式系统与微服务架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%A7%BB%E5%8A%A8%E7%AB%AF%E4%B8%8EAPI%E8%AE%A4%E8%AF%81"><span class="toc-number">3.3.</span> <span class="toc-text">3. 移动端与API认证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%97%A0%E5%AF%86%E7%A0%81%E8%AE%A4%E8%AF%81%E4%B8%8E%E4%B8%B4%E6%97%B6%E6%8E%88%E6%9D%83"><span class="toc-number">3.4.</span> <span class="toc-text">4. 无密码认证与临时授权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E7%AC%AC%E4%B8%89%E6%96%B9%E6%8E%88%E6%9D%83%EF%BC%88OAuth-2-0%EF%BC%89"><span class="toc-number">3.5.</span> <span class="toc-text">5. 第三方授权（OAuth 2.0）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E3%80%81JWT%E4%BB%A4%E7%89%8C%E7%9A%84%E4%B8%8D%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">4.</span> <span class="toc-text">四、JWT令牌的不适用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%9C%80%E8%A6%81%E9%A2%91%E7%B9%81%E6%92%A4%E9%94%80%E6%9D%83%E9%99%90%E6%88%96%E4%BB%A4%E7%89%8C%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">4.1.</span> <span class="toc-text">1. 需要频繁撤销权限或令牌的场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%95%BF%E6%97%B6%E9%97%B4%E6%9C%89%E6%95%88%E7%9A%84%E4%BB%A4%E7%89%8C%E9%9C%80%E6%B1%82"><span class="toc-number">4.2.</span> <span class="toc-text">2. 长时间有效的令牌需求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%AB%98%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B8%A6%E5%AE%BD%E6%95%8F%E6%84%9F%E5%9C%BA%E6%99%AF"><span class="toc-number">4.3.</span> <span class="toc-text">3. 高并发与带宽敏感场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E9%9C%80%E8%A6%81%E5%AD%98%E5%82%A8%E5%A4%8D%E6%9D%82%E7%94%A8%E6%88%B7%E7%8A%B6%E6%80%81%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">4.4.</span> <span class="toc-text">4. 需要存储复杂用户状态的场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%AF%B9%E5%AE%89%E5%85%A8%E6%80%A7%E8%A6%81%E6%B1%82%E6%9E%81%E9%AB%98%E7%9A%84%E6%95%8F%E6%84%9F%E5%9C%BA%E6%99%AF"><span class="toc-number">4.5.</span> <span class="toc-text">5. 对安全性要求极高的敏感场景</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94%E3%80%81JWT%E4%BB%A4%E7%89%8C%E7%9A%84%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text">五、JWT令牌的快速入门使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-maven%E5%BC%95%E5%85%A5jwt"><span class="toc-number">5.1.</span> <span class="toc-text">1.maven引入jwt</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BAjwt%E5%B7%A5%E5%85%B7%E7%B1%BB%EF%BC%8C%E5%9C%A8%E9%87%8C%E9%9D%A2%E5%88%9B%E5%BB%BA%E4%B8%A4%E4%B8%AA%E6%96%B9%E6%B3%95"><span class="toc-number">5.2.</span> <span class="toc-text">2.创建jwt工具类，在里面创建两个方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%88%9B%E5%BB%BAjwt%E4%BB%A4%E7%89%8C"><span class="toc-number">5.3.</span> <span class="toc-text">3.创建jwt令牌</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%88%9B%E5%BB%BAjwt%E8%A7%A3%E6%9E%90"><span class="toc-number">5.4.</span> <span class="toc-text">4.创建jwt解析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#4-1-%E5%88%9B%E5%BB%BA%E8%A7%A3%E6%9E%90%E5%99%A8%E5%AE%9E%E4%BE%8B-Jwts-parser"><span class="toc-number">5.4.1.</span> <span class="toc-text">4.1. 创建解析器实例 (Jwts.parser())</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-2-%E8%AE%BE%E7%BD%AE%E7%AD%BE%E5%90%8D%E5%AF%86%E9%92%A5-setSigningKey-signKey"><span class="toc-number">5.4.2.</span> <span class="toc-text">4.2. 设置签名密钥 (setSigningKey(signKey))</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-3-%E8%A7%A3%E6%9E%90%E5%B9%B6%E9%AA%8C%E8%AF%81%E4%BB%A4%E7%89%8C-parseClaimsJws-jwt"><span class="toc-number">5.4.3.</span> <span class="toc-text">4.3. 解析并验证令牌 (parseClaimsJws(jwt))</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/22/JWT%E4%BB%A4%E7%89%8C%E6%8A%80%E6%9C%AF/" title="JWT令牌技术">JWT令牌技术</a><time datetime="2025-05-22T05:03:32.000Z" title="发表于 2025-05-22 13:03:32">2025-05-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/20/%E5%85%B3%E4%BA%8E%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E9%A1%B9%E7%9B%AELua%E8%84%9A%E6%9C%AC%E7%9A%84%E4%BD%BF%E7%94%A8/" title="关于黑马点评项目Lua脚本的使用">关于黑马点评项目Lua脚本的使用</a><time datetime="2025-05-20T10:11:54.000Z" title="发表于 2025-05-20 18:11:54">2025-05-20</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/15/%E4%BD%A0%E4%BB%A5%E4%B8%BA%E7%A9%BA%E6%8C%87%E9%92%88%E5%BC%82%E5%B8%B8%E5%8F%AA%E6%98%AF%E6%96%B0%E6%89%8B%E4%B8%93%E5%88%A9%EF%BC%9F%E8%BF%99%E4%BA%9B%E5%9D%91%E4%BD%A0%E5%8F%AF%E8%83%BD%E6%AF%8F%E5%A4%A9%E9%83%BD%E5%9C%A8%E8%B8%A9/" title="你以为空指针异常只是新手专利？这些坑你可能每天都在踩!">你以为空指针异常只是新手专利？这些坑你可能每天都在踩!</a><time datetime="2025-05-15T07:11:41.000Z" title="发表于 2025-05-15 15:11:41">2025-05-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/15/%E4%BD%A0%E6%AF%8F%E5%A4%A9%E9%83%BD%E5%9C%A8%E7%94%A8%E7%9A%84%E8%A3%85%E7%AE%B1%E5%92%8C%E6%8B%86%E7%AE%B1%EF%BC%8C%E5%8F%AF%E8%83%BD%E8%97%8F%E7%9D%80%E8%BF%99%E4%BA%9B%E5%9D%91%EF%BC%81/" title="你每天都在用的装箱和拆箱，可能藏着这些坑！">你每天都在用的装箱和拆箱，可能藏着这些坑！</a><time datetime="2025-05-15T07:04:53.000Z" title="发表于 2025-05-15 15:04:53">2025-05-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/05/13/LeetCode-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/" title="LeetCode-两数之和">LeetCode-两数之和</a><time datetime="2025-05-13T12:47:40.000Z" title="发表于 2025-05-13 20:47:40">2025-05-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2025 By Luminous</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div><div class="footer_custom_text">Luminous-9</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div>
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z\d\-\.\+]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(t.test(e.href)||r.test(e.href))&&(e.href=a.dataset.original)})});</script><script>(r=>{r.imageLazyLoadSetting.processImages=t;var a=r.imageLazyLoadSetting.isSPA,o=r.imageLazyLoadSetting.preloadRatio||1,d=i();function i(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(t){(a||t)&&(d=i());for(var e,n=0;n<d.length;n++)0<=(e=(e=d[n]).getBoundingClientRect()).bottom&&0<=e.left&&e.top<=(r.innerHeight*o||document.documentElement.clientHeight*o)&&(()=>{var t,e,a,o,i=d[n];e=function(){d=d.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).dataset.loaded||(t.hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(a=new Image,o=t.getAttribute("data-original"),a.onload=function(){t.src=o,t.removeAttribute("data-original"),t.setAttribute("data-loaded",!0),e&&e()},a.onerror=function(){t.removeAttribute("data-original"),t.setAttribute("data-loaded",!1),t.src=o},t.src!==o&&(a.src=o)))})()}function e(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",e),r.addEventListener("resize",e),r.addEventListener("orientationchange",e)})(this);</script></body></html>
